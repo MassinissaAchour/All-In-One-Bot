@@ -1,0 +1,36 @@
+{
+  "name": "All-In-One-Bot",
+  "version": "1.0.0",
+  "description": "A multi-functionality bot for Discord.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node %NODE_DEBUG_OPTION% ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MassinissaAchour/All-In-One-Bot.git"
+  },
+  "keywords": [
+    "bot, discord, music, tournament, soundboard"
+  ],
+  "author": "Massinissa Achour",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MassinissaAchour/All-In-One-Bot/issues"
+  },
+  "homepage": "https://github.com/MassinissaAchour/All-In-One-Bot#readme",
+  "dependencies": {
+    "discord.js": "^11.6.4",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-binaries": "^3.2.2",
+    "fs": "0.0.1-security",
+    "get-youtube-id": "^1.0.1",
+    "mkdirp": "^0.5.1",
+    "opusscript": "0.0.6",
+    "request": "^2.87.0",
+    "sqlite3": "^4.0.6",
+    "xmlhttprequest": "^1.8.0",
+    "youtube-info": "^1.3.2",
+    "ytdl-core": "^0.21.1"
+  }
+}
