@@ -79,6 +79,10 @@ Lists all the available sound clips.
 # What's next?  
 
 ## New functionalities  
+
+**Karaoke**  
+  A function that will lookup a karaoke version of the song and print the lyrics of the song that is going to be played in a voice channel.  
+  
 **Activity recorder**  
 A system that records the sserver members' activity and makes it fun with a rewarding system.  
 It could be something like gaining experience points when being active and leveling up. Certain levels unlock roles that could give new permissions like the ability to use certain functionalities of the bot.  
