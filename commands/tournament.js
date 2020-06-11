@@ -240,7 +240,7 @@ function simpleEmbed(color, title, description, fieldTitle, fieldContent)
 }
 
 function listTeams(guild){
-    var teamsEmbed = listTeamsEmbed('#0099ff', 'Matchmaking', 'The teams', guilds[message.guild.id].teams);
+    var teamsEmbed = listTeamsEmbed('#0099ff', 'Matchmaking', 'The teams', guilds[guild.id].teams);
     guilds[guild.id].channel.send(teamsEmbed);
 }
 
@@ -321,7 +321,7 @@ function onReaction (registrationMessage) {
         guilds[registrationMessage.guild.id].unverifiedPlayers.push({author : user.tag, nickname : nickname});
 
         //send him a DM and wait for an answer
-        user.send("Please enter the region of your highest ranked account followed by the IGN (ex : NA Xelsaid). You have 1 minute.").then(function (askIgnMsg) {
+        user.send("Please enter the region of your highest ranked account followed by the IGN (ex : NA Acorntopper). You have 1 minute.").then(function (askIgnMsg) {
             onDM(askIgnMsg, registrationMessage, user)
         });
     });
