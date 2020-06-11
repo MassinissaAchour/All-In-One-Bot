@@ -39,27 +39,36 @@ Disconnects the bot from a voice chat.
 **Commands**
 `tournament start [nbTeams] [nbPlayersPerTeam]`  
 Starts a tournament with the specified size.  
+  
 `tournament register [REGION] [IGN]`  
 Registers you to the tournament and associates you to your League Of Legends account.  
+  
 `tournament unregister`  
 Unregisters you from the current tournament.  
+  
 `tournament unregister [IGN|discordName]`  
 Unregisters the user from the current tournament.  
+  
 `tournament registered`  
 Shows the list of the currently registered players.  
+  
 `tournament status`  
 Shows the status of the tournament (open/closed and how many players are registered/how many left to complete).  
+  
 `tournament cancel`  
 Cancels the current tournament.  
-
+  
+  
 ## Soundboard  
 
 **Commands**  
 
 `soundboard [Sound Name]`  
-Plays the selected sound clip in your voice chat.  
+Plays the selected sound clip in your voice chat. 
+  
 `soundboard list`  
 Lists all the available sound clips.  
+  
 
 # What's next?  
 
