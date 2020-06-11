@@ -3,12 +3,12 @@
 For Discord lovers, bots are a big part of a good server. They can be useful, entertaining or just fun. But it's also very annoying to have multiple bots on the same server. They need to install each one of the bots on the server separately. They need to remember the prefix for each one of them. They need to setup permissions and roles for each one of them. It becomes very annoying overall to manage that many bots at the same time. 
   
 All In One Bot is a Discord bot with multiple functionalities. Whether you want to play music or organize a tournament, all you need is this bot. No more prefix management on your server. All the functionalities in one installation.  
-
+  
 
 # Functionalities  
   
 The bot currently contains these functionalities :  
-
+  
 **Music** : A music player that joins Discord calls and plays music from Youtube. The player can be fed a youtube URL or just a song name that will be searched through youtube. The player can queue up songs and play songs on repeat or entire queues on repeat.  
   
 **Tournament** : A tournament organisation helper for League Of Legends. An admin needs to use the start command on a text channel with the team sizes and number of teams. An announcement will be made and registrations will be open. Players can either type a command to register or react to the announcement. Once they have reacted to the announcement a direct message will be sent to them by the bot with registration instructions. Players can register with accounts from any League of Legends server. Once the max number of players has been reached, the bot creates balanced teams by using each player's solo queue rank with the Riot Games API.  
@@ -20,19 +20,25 @@ The bot currently contains these functionalities :
 **Commands**  
 `music play [Youtube URL]`  
 Plays a youtube video's audio.  
+  
 `music play [song name to search]`  
 Searches on youtube and plays the first matching video's audio.  
+  
 `music skip`  
 Vote to skip the current song.  
+  
 `music queue`  
 Lists the queued songs  
+  
 `music mode [repeat|playlist|normal]`  
 Chose a mode for the bot. Repeat plays a song on loop. Playlist plays the current queue in a loop.  
+  
 `music purge`  
 Stops the current music and empties the queue.  
+  
 `music disconnect`  
 Disconnects the bot from a voice chat.  
-
+  
 
 ## Tournament  
 
