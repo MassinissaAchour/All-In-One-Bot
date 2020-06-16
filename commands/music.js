@@ -1,10 +1,9 @@
 const config = require('../config.json');
 const help = require('../help.json');
 const Discord = require('discord.js');
-const ytdl = require("ytdl-core-discord");
-const getYouTubeID = require("get-youtube-id");
+const ytdlDiscord = require("ytdl-core-discord");
+const ytdl = require("ytdl-core");
 const request = require("request");
-const fetchVideoInfo = require("youtube-info");
 
 
 let guilds = {};
@@ -56,10 +55,10 @@ function playCommand(message, args) {
             getID(args, function (id, type) {
                 if (type === 'id'){
                     guilds[message.guild.id].queue.push(id);
-                    fetchVideoInfo(id, function (err, videoInfo) {
+                    ytdl.getInfo('https://www.youtube.com/watch?v='+id, function(err, info) {
                         if (err) throw new Error(err);
-                        message.reply(" added to queue: **" + videoInfo.title + "**");
-                        guilds[message.guild.id].queueNames.push(videoInfo.title);
+                        message.reply(" added to queue: **" + info.title + "**");
+                        guilds[message.guild.id].queueNames.push(info.title);
                     });
                 }else if (type === 'playlist'){
                     playlistItemsListByPlaylistId(id, function(ids) {
@@ -77,10 +76,10 @@ function playCommand(message, args) {
                 if (type === 'id'){
                     guilds[message.guild.id].queue.push(id);
                     playMusic(id, message);
-                    fetchVideoInfo(id, function (err, videoInfo) {
+                    ytdl.getInfo('https://www.youtube.com/watch?v='+id, function(err, info) {
                         if (err) throw new Error(err);
-                        guilds[message.guild.id].queueNames.push(videoInfo.title);
-                        message.reply(" now playing: **" + videoInfo.title + "**");
+                        guilds[message.guild.id].queueNames.push(info.title);
+                        message.reply(" now playing: **" + info.title + "**");
                     });
                 }else if (type === 'playlist'){
                     playlistItemsListByPlaylistId(id, function(ids) {
@@ -241,7 +240,7 @@ function playMusic(id, message) {
         if ( !guilds[message.guild.id].isPlaying )
             return;
 
-        stream = await ytdl("https://www.youtube.com/watch?v=" + id, {
+        stream = await ytdlDiscord("https://www.youtube.com/watch?v=" + id, {
             quality: 'highestaudio',
             filter: 'audioonly'
         });
@@ -291,8 +290,8 @@ function shiftQueue(message){
 function getID(str, cb) {
     if( isYoutubePlaylist(str[0]) ){
         cb(getYouTubePlaylistID(str[0]), 'playlist');
-    }else if (isYoutube(str[0]) ) {
-        cb(getYouTubeID(str), 'id');
+    }else if (isYoutube(str[0]) && ytdl.validateURL(str[0]) ) {
+        cb(ytdl.getURLVideoID(str[0]), 'id');
     } else {
         search_video(str, function(id) {
             cb(id, 'id');

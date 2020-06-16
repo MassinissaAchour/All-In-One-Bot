@@ -1,7 +1,7 @@
 const config = require('../config.json');
 const help = require('../help.json');
 const Discord = require('discord.js');
-const ytdl = require("ytdl-core-discord");
+const ytdlDiscord = require("ytdl-core-discord");
 const Sounds = require('../soundeffects.json');
 
 
@@ -89,7 +89,7 @@ function playSound(id, message) {
         if ( !guilds[message.guild.id].isPlaying )
             return;
 
-        stream = await ytdl("https://www.youtube.com/watch?v=" + id, {
+        stream = await ytdlDiscord("https://www.youtube.com/watch?v=" + id, {
             quality: 'highestaudio',
             filter: 'audioonly'
         });
