@@ -76,23 +76,37 @@ Plays the selected sound clip in your voice chat.
 `soundboard list`  
 Lists all the available sound clips.  
   
+## Moderation tools  
 
+**Commands**  
+
+`mod purge`  
+removes the last 100 messages in the text channel.  
+  
+`mod purge [amount]`  
+removes X messages in the text channel.  
+  
+`mod purge [@mention]`  
+removes the last 100 messages by a specific member in the text channel.  
+  
+`mod purge [amount][@mention]`  
+removes X messages in the text channel by a specific member.  
+  
+## Karaoke  
+
+**Commands**  
+
+`karaoke [song name]`  
+Searches for the song using the Genius API and prints it's lyrics in the text channel.  
+  
 # What's next?  
 
 ## New functionalities  
-
-**Karaoke**  
-  A function that will lookup a karaoke version of the song and print the lyrics of the song that is going to be played in a voice channel.  
   
 **Activity recorder**  
 A system that records the sserver members' activity and makes it fun with a rewarding system.  
 It could be something like gaining experience points when being active and leveling up. Certain levels unlock roles that could give new permissions like the ability to use certain functionalities of the bot.  
 
-**Moderation tools**  
-Some moderation tools would be useful. Some of the functions could be :  
-- **Black listed words** : The bot will automatically delete black listed words (like the n-word) and give a warning/mute/ban the author of the message.  
-- **Delete the past X messages** : With a simple command the Admins should be able to delete the past few messages in a channel or from a specific user.  
-- **Purge channel** : With a simple command the Admins should be able to clear all messages from a text channel or from a specific user.  
 
 ##  Improvements  
 
@@ -106,3 +120,10 @@ Some moderation tools would be useful. Some of the functions could be :
 
 **Soundboard**  
 - Make a command that adds a sound to the sound bank without having to go through changing the json file.  
+
+**Moderation tools**  
+Some moderation tools would be useful. Some of the functions could be :  
+- **Black listed words** : The bot will automatically delete black listed words (like the n-word) and give a warning/mute/ban the author of the message.  
+
+**Karaoke**  
+- **Pair with the music functionality** : Join a voice channel and play the karaoke version of the song.  
