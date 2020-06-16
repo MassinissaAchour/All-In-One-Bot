@@ -5,7 +5,8 @@
   "bot_role_id": "bot role id here",
   "yt_api_key": "youtube api key here",
   "riot_api_key": "riot games api key here",
-  "roles_tournament": ["720026962495799306"],
+  "genius_api" : "genius api key here",
+  "roles_tournament": ["720027162215841812", "514103730904367108"],
   "roles_music_admins": ["720027162215841812"],
   "other_id": "83700275096846336"
 }

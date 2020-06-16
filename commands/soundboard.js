@@ -1,11 +1,11 @@
 const config = require('../config.json');
 const help = require('../help.json');
 const Discord = require('discord.js');
-const ytdl = require("ytdl-core");
+const ytdl = require("ytdl-core-discord");
 const Sounds = require('../soundeffects.json');
 
 
-var guilds = {};
+let guilds = {};
 
 // Soundboard functionality
 
@@ -21,7 +21,7 @@ exports.run = function(client, message, args, tools) {
         };
     }
 
-    var command = args.shift().toLowerCase();
+    let command = args.shift().toLowerCase();
 
     if( command === "help" ){
         helpCommand(message);
@@ -37,8 +37,8 @@ exports.run = function(client, message, args, tools) {
 
 // play [sound name] : plays a sound from the soundboard
 function playCommand(message, args) {
-    if (message.member.voiceChannel || guilds[message.guild.id].voiceChannel != null) {
-        var soundName = args.join(' ').toLowerCase();
+    if (message.member.voice.channel || guilds[message.guild.id].voiceChannel != null) {
+        let soundName = args.join(' ').toLowerCase();
 
         if (guilds[message.guild.id].queue.length > 0 || guilds[message.guild.id].isPlaying) {
             if( soundName in Sounds )
@@ -63,19 +63,19 @@ function playCommand(message, args) {
 // list : Shows the list of available sound bits.
 function listCommand(message){
     // create an Embed message
-    var list = "";
-    for ( var soundName in Sounds){
+    let list = "";
+    for ( let soundName in Sounds){
         list += soundName + "\n";
     }
 
-    var exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Soundboard bot', 'Sounds', list);
+    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Soundboard bot', 'Sounds', list);
     message.channel.send(exampleEmbed);
 }
 
 // help : Shows the list of commands and a description.
 function helpCommand(message) {
     // create an Embed message
-    var exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Soundboard bot', 'Commands', help.soundboard);
+    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Soundboard bot', 'Commands', help.soundboard);
     message.channel.send(exampleEmbed);
 }
 
@@ -83,19 +83,19 @@ function helpCommand(message) {
 ////////////////Youtube API methods/////////////////////
 
 function playSound(id, message) {
-    guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
+    guilds[message.guild.id].voiceChannel = message.member.voice.channel;
 
-    guilds[message.guild.id].voiceChannel.join().then(function(connection) {
+    guilds[message.guild.id].voiceChannel.join().then(async function(connection) {
         if ( !guilds[message.guild.id].isPlaying )
             return;
 
-        stream = ytdl("https://www.youtube.com/watch?v=" + id, {
+        stream = await ytdl("https://www.youtube.com/watch?v=" + id, {
             quality: 'highestaudio',
             filter: 'audioonly'
         });
 
-        guilds[message.guild.id].dispatcher = connection.playStream(stream);
-        guilds[message.guild.id].dispatcher.on('end', function() {
+        guilds[message.guild.id].dispatcher = connection.play(stream, { type: 'opus' });
+        guilds[message.guild.id].dispatcher.on('finish', function() {
             guilds[message.guild.id].queue.shift();
             if (guilds[message.guild.id].queue.length === 0) {
                 guilds[message.guild.id].queue = [];
@@ -115,7 +115,7 @@ function playSound(id, message) {
 
 function simpleEmbed(color, title, description, fieldTitle, fieldContent)
 {
-    return  new Discord.RichEmbed()
+    return  new Discord.MessageEmbed()
         .setColor(color)
         .setTitle(title)
         .setDescription(description)

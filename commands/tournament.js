@@ -3,15 +3,15 @@ const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const config = require('../config.json');
 const help = require('../help.json');
 
-var guilds = {};
+let guilds = {};
 
-var Tiers = {"UNRANKED" : 0, "BRONZE": 0, "SILVER": 1, "GOLD": 2, "PLATINUM" : 3, "DIAMOND" : 4, "MASTER" : 5, "GRANDMASTERMASTER" : 6, "CHALLENGER" : 7};
+let Tiers = {"UNRANKED" : 0, "IRON": 0, "BRONZE": 1, "SILVER": 2, "GOLD": 3, "PLATINUM" : 4, "DIAMOND" : 5, "MASTER" : 6, "GRANDMASTERMASTER" : 7, "CHALLENGER" : 8};
 Object.freeze(Tiers);
 
-var Ranks = {"I": 3, "II": 2, "III": 1, "IV" : 0};
+let Ranks = {"I": 3, "II": 2, "III": 1, "IV" : 0};
 Object.freeze(Ranks);
 
-var Regions = {"na" : 'na1', "euw" : 'euw1', "eune": 'eun1', "jp": 'jp1', "kr": 'kr1', "lan" : 'la1', "las" : 'la2', "oce" : 'oc1', "tr" : 'tr1', "ru" : 'ru1'};
+let Regions = {"na" : 'na1', "euw" : 'euw1', "eune": 'eun1', "jp": 'jp1', "kr": 'kr1', "lan" : 'la1', "las" : 'la2', "oce" : 'oc1', "tr" : 'tr1', "ru" : 'ru1'};
 Object.freeze(Regions);
 
 
@@ -35,7 +35,7 @@ exports.run = function(client, message, args, tools) {
     }
 
     //pull the command
-    var command = args.shift().toLowerCase();
+    let command = args.shift().toLowerCase();
 
     if (command.toLowerCase() === "start") {
         startCommand(message, args);
@@ -94,7 +94,7 @@ function startCommand(message, args) {
     guilds[message.guild.id].msgCollectors = [];
 
     // create an Embed message
-    var exampleEmbed = simpleEmbed('#0099ff', 'Inhouse', 'Small scale tournament', 'Registrations', "The registration process has started." +
+    let exampleEmbed = simpleEmbed('#0099ff', 'Inhouse', 'Small scale tournament', 'Registrations', "The registration process has started." +
         " We are waiting for " + (guilds[message.guild.id].nbPlayersPerTeam * guilds[message.guild.id].nbTeams) + " players to register." +
         " To enter the inhouse please type the command " + config.prefix + "tournament register <YOUR-REGION> <YOUR-IGN>." +
         " Please use the IGN of your highest ranked account even if you're not going to play on it.");
@@ -117,7 +117,7 @@ function cancelCommand(message) {
     guilds[message.guild.id].teams = [];
     guilds[message.guild.id].registration = false;
 
-    for (var key in guilds[message.guild.id].msgCollectors )
+    for (let key in guilds[message.guild.id].msgCollectors )
         guilds[message.guild.id].msgCollectors[key].stop();
     guilds[message.guild.id].msgCollectors = [];
 
@@ -126,8 +126,8 @@ function cancelCommand(message) {
 
 // register [REGION] [IGN] : Registers you to the tournament and associates you to your League Of Legends account.
 function registerCommand(message, args) {
-    var region = args.shift();
-    var ign = args.join(' ');
+    let region = args.shift();
+    let ign = args.join(' ');
 
     if( region == null || ign == null ){
         message.reply("Missing arguments. Please enter your Region and IGN.");
@@ -142,13 +142,13 @@ function registerCommand(message, args) {
 // (Admin) unregister [ign] : Unregisters the player from the current tournament.
 function unregisterCommand(message, args) {
     //fuse args to make IGN
-    var ign = args.shift();
-    var arg;
+    let ign = args.shift();
+    let arg;
     while ( (arg = args.shift()) != null ){
         ign += " " + arg;
     }
     if ( ign != null ){
-        for ( var key in guilds[message.guild.id].players){
+        for ( let key in guilds[message.guild.id].players){
             if( guilds[message.guild.id].players[key].author === ign || guilds[message.guild.id].players[key].ign === ign){
                 guilds[message.guild.id].players.splice(key, 1);
                 message.reply("Unregistered");
@@ -162,7 +162,7 @@ function unregisterCommand(message, args) {
         }
         message.reply("This user is not registered");
     }else{
-        for ( var key in guilds[message.guild.id].players){
+        for ( let key in guilds[message.guild.id].players){
             if( guilds[message.guild.id].players[key].author === message.author.tag ){
                 guilds[message.guild.id].players.splice(key, 1);
                 message.reply("Unregistered");
@@ -176,7 +176,7 @@ function unregisterCommand(message, args) {
             }
         }
 
-        for ( var key in guilds[message.guild.id].unverifiedPlayers) {
+        for ( let key in guilds[message.guild.id].unverifiedPlayers) {
             if (guilds[message.guild.id].unverifiedPlayers[key].author === message.author.tag) {
                 guilds[message.guild.id].unverifiedPlayers.splice(key, 1);
                 message.reply("You have been removed from the unverified players list.");
@@ -189,7 +189,7 @@ function unregisterCommand(message, args) {
 
 // registered : Shows the list of the currently registered players.
 function registeredCommand(message) {
-    var playerListEmbed = listPlayersEmbed('#0099ff', 'Registrations', 'List of registered players', sortPlayers(guilds[message.guild.id].players));
+    let playerListEmbed = listPlayersEmbed('#0099ff', 'Registrations', 'List of registered players', sortPlayers(guilds[message.guild.id].players));
     guilds[message.guild.id].channel.send(playerListEmbed);
 }
 
@@ -199,14 +199,14 @@ function statusCommand(message) {
         message.reply("Registrations are closed.");
         return;
     }
-    var print = "Players : " + guilds[message.guild.id].players.length + "/" + (guilds[message.guild.id].nbPlayersPerTeam * guilds[message.guild.id].nbTeams) ;
+    let print = "Players : " + guilds[message.guild.id].players.length + "/" + (guilds[message.guild.id].nbPlayersPerTeam * guilds[message.guild.id].nbTeams) ;
     message.channel.send(print);
 }
 
 // help : Shows the list of commands and a description.
 function helpCommand(message) {
     // create an Embed message
-    var exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Tournament bot', 'Commands', help.tournament);
+    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Tournament bot', 'Commands', help.tournament);
     message.channel.send(exampleEmbed);
 }
 
@@ -217,7 +217,7 @@ function helpCommand(message) {
 
 function httpGet(theUrl)
 {
-    var xmlHttp = new XMLHttpRequest();
+    let xmlHttp = new XMLHttpRequest();
     xmlHttp.onerror = function(error) {
         console.log(error.toString())
     };
@@ -229,31 +229,30 @@ function httpGet(theUrl)
 
 function simpleEmbed(color, title, description, fieldTitle, fieldContent)
 {
-    var embed = new Discord.RichEmbed()
+    return new Discord.MessageEmbed()
         .setColor(color)
         .setTitle(title)
         .setDescription(description)
         .addField(fieldTitle, fieldContent)
         .setTimestamp()
         .setFooter(config.bot_name +' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
-    return embed
 }
 
 function listTeams(guild){
-    var teamsEmbed = listTeamsEmbed('#0099ff', 'Matchmaking', 'The teams', guilds[guild.id].teams);
+    let teamsEmbed = listTeamsEmbed('#0099ff', 'Matchmaking', 'The teams', guilds[guild.id].teams);
     guilds[guild.id].channel.send(teamsEmbed);
 }
 
 function listPlayersEmbed(color, title, description, players)
 {
-    var embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
         .setColor(color)
         .setTitle(title)
         .setDescription(description)
         .setTimestamp()
         .setFooter(config.bot_name + ' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
 
-    for ( var key in players){
+    for ( let key in players){
         if ( players[key].nickname == null )
             embed.addField(players[key].author, players[key].ign + " ( " + players[key].tier + " " + players[key].rank + " )" );
         else
@@ -264,24 +263,24 @@ function listPlayersEmbed(color, title, description, players)
 
 function listTeamsEmbed(color, title, description, teams)
 {
-    var embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
         .setColor(color)
         .setTitle(title)
         .setDescription(description)
         .setTimestamp()
         .setFooter(config.bot_name + ' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
 
-    for ( var team in teams ){
-        var teamRank = 0;
-        var playersList = "";
-        var sortedTeam = sortPlayers(teams[team]);
-        for ( var player in sortedTeam ) {
+    for ( let team in teams ){
+        let teamRank = 0;
+        let playersList = "";
+        let sortedTeam = sortPlayers(teams[team]);
+        for ( let player in sortedTeam ) {
             playersList += sortedTeam[player].ign + " ( " + sortedTeam[player].tier + " " + sortedTeam[player].rank + " )\n";
             teamRank += calcRankingPoints(sortedTeam[player]);
         }
-        var points = Math.floor(teamRank / sortedTeam.length);
-        var tier = Math.floor(points / 5);
-        var rank = points % 5;
+        let points = Math.floor(teamRank / sortedTeam.length);
+        let tier = Math.floor(points / Object.keys(Ranks).length);
+        let rank = points % Object.keys(Ranks).length;
 
         embed.addField("Team " + (Number(team) + 1 ) + " (AVG RNK " + fromValueToTier(tier) + " " + fromValueToRank(rank) +  " )", playersList );
     }
@@ -295,14 +294,14 @@ function onReaction (registrationMessage) {
     };
 
     registrationMessage.react("👍");
-    var collector = registrationMessage.createReactionCollector(filter, { time: 1800000 });
+    let collector = registrationMessage.createReactionCollector(filter, { time: 1800000 });
     collector.on('collect', function (reaction, collector) {
         //check if registrations are open
         if ( !guilds[registrationMessage.guild.id].registration ){
             return;
         }
 
-        var user = reaction.users.last();
+        let user = reaction.users.cache.last();
 
         //check if the player is registered
         if ( isRegistered(registrationMessage.guild, user) )
@@ -315,7 +314,7 @@ function onReaction (registrationMessage) {
         }
 
         //pull out his nickname
-        var nickname = registrationMessage.guild.members.get(user.id).nickname;
+        let nickname = registrationMessage.guild.members.cache.get(user.id).nickname;
 
         //push the player in the unverified players list
         guilds[registrationMessage.guild.id].unverifiedPlayers.push({author : user.tag, nickname : nickname});
@@ -336,9 +335,9 @@ function onDM(askIgnMsg, registrationMessage, user) {
             return;
 
         // separate region and ign
-        var message = msg.content.trim().split(' ');
-        var region = message.shift();
-        var ign = message.join(' ');
+        let message = msg.content.trim().split(' ');
+        let region = message.shift();
+        let ign = message.join(' ');
 
         //try to register him
         if ( register( ign, region, msg, registrationMessage.guild ) )
@@ -351,7 +350,7 @@ function onDM(askIgnMsg, registrationMessage, user) {
                 user.send("Registrations have been closed.")
             }else{
                 //remove from unverified players list if found
-                for ( var key in guilds[registrationMessage.guild.id].unverifiedPlayers)
+                for ( let key in guilds[registrationMessage.guild.id].unverifiedPlayers)
                     if (guilds[registrationMessage.guild.id].unverifiedPlayers[key].author === user.tag)
                         guilds[registrationMessage.guild.id].unverifiedPlayers.splice(key, 1);
                 user.send("Delay ended. You have been removed from the unverified players list.")
@@ -370,7 +369,7 @@ function register(ign, region, message, guild)
         return;
     }
 
-    for ( var key in guilds[guild.id].players){
+    for ( let key in guilds[guild.id].players){
          if( guilds[guild.id].players[key].author === message.author.tag ){
              message.reply("You have already been registered.");
              return false;
@@ -383,11 +382,11 @@ function register(ign, region, message, guild)
     }
 
     //chose region
-    var regionName = regionSelect(region);
+    let regionName = regionSelect(region);
 
     // check ign and rank
-    var result = httpGet('https://' + regionName + '.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + encodeURIComponent(ign) + '?api_key=' + config.riot_api_key);
-    var player = JSON.parse( result );
+    let result = httpGet('https://' + regionName + '.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + encodeURIComponent(ign) + '?api_key=' + config.riot_api_key);
+    let player = JSON.parse( result );
 
     if ( player.id === undefined ){
         message.reply("Account not found.");
@@ -395,22 +394,21 @@ function register(ign, region, message, guild)
     }
 
     result = httpGet('https://' + regionName + '.api.riotgames.com/lol/league/v4/entries/by-summoner/' + player.id + '?api_key=' + config.riot_api_key);
-    var queues = JSON.parse( result );
+    let queues = JSON.parse( result );
 
-    var rank = "V";
-    var tier = "UNRANKED";
+    let rank = "V";
+    let tier = "UNRANKED";
 
-    for (var key in queues ){
+    for (let key in queues ){
         if ( queues[key].queueType === 'RANKED_SOLO_5x5' ){
             rank = queues[key].rank;
             tier = queues[key].tier;
         }
     }
 
-    var nickname = guild.members.get(message.author.id).nickname;
-
+    let nickname = guild.members.cache.get(message.author.id).nickname;
     //remove from unverified players list if found
-    for ( var key in guilds[guild.id].unverifiedPlayers)
+    for ( let key in guilds[guild.id].unverifiedPlayers)
         if (guilds[guild.id].unverifiedPlayers[key].author === message.author.tag)
             guilds[guild.id].unverifiedPlayers.splice(key, 1);
 
@@ -424,14 +422,14 @@ function register(ign, region, message, guild)
         guilds[guild.id].registration = false;
         guilds[guild.id].unverifiedPlayers = [];
 
-        for (var key in guilds[guild.id].msgCollectors )
+        for (let key in guilds[guild.id].msgCollectors )
             guilds[guild.id].msgCollectors[key].stop();
         guilds[guild.id].msgCollectors = [];
 
-        var teams = matchmake(guilds[guild.id].players, guilds[guild.id].nbTeams, guilds[guild.id].nbPlayersPerTeam);
+        let teams = matchmake(guilds[guild.id].players, guilds[guild.id].nbTeams, guilds[guild.id].nbPlayersPerTeam);
         guilds[guild.id].teams = teams;
 
-        for ( var team in teams ){
+        for ( let team in teams ){
             console.log(teams[team]);
         }
 
@@ -442,32 +440,32 @@ function register(ign, region, message, guild)
 }
 
 function isRegistered(guild, user ){
-    for ( var key in guilds[guild.id].players)
+    for ( let key in guilds[guild.id].players)
         if( guilds[guild.id].players[key].author === user.tag )
             return true;
     return false
 }
 
 function isUnverified(guild, user){
-    for ( var key in guilds[guild.id].unverifiedPlayers)
+    for ( let key in guilds[guild.id].unverifiedPlayers)
         if( guilds[guild.id].unverifiedPlayers[key].author === user.tag )
             return true;
     return false;
 }
 
 function calcRankingPoints(player){
-    var points = Tiers[player.tier] * 4 + Ranks[player.rank];
+    let points = Tiers[player.tier] * Object.keys(Ranks).length + Ranks[player.rank];
     if ( Tiers[player.tier] === Tiers.CHALLENGER)
-        points -= 8;
+        points -= Object.keys(Ranks).length * 3;
     else if ( Tiers[player.tier] === Tiers.GRANDMASTERMASTER)
-        points -= 4;
+        points -= Object.keys(Ranks).length * 2;
     else if ( Tiers[player.tier] === Tiers.MASTER)
-        points -= 4;
+        points -= Object.keys(Ranks).length;
     return points;
 }
 
 function fromValueToTier(tier){
-    var tierName = "";
+    let tierName = "";
     Object.keys(Tiers).some(function (k) {
         if (Tiers[k] === tier) {
             tierName = k.toString();
@@ -479,7 +477,7 @@ function fromValueToTier(tier){
 }
 
 function fromValueToRank(rank){
-    var rankName = "";
+    let rankName = "";
     Object.keys(Ranks).some(function (k) {
         if (Ranks[k] === rank) {
             rankName = k.toString();
@@ -496,7 +494,7 @@ function sortPlayers(players) {
 }
 
 function regionSelect(region){
-    var regionName = 'na1';
+    let regionName = 'na1';
 
     if (Regions[region.toLowerCase()] != null)
         return Regions[region.toLowerCase()];
@@ -505,8 +503,8 @@ function regionSelect(region){
 }
 
 function hasTournamentPerms(message) {
-    for (var  i = 0 ; i < config.roles_tournament.length ; i++)
-        if ( message.member.roles.find('id', config.roles_tournament[i]) != null )
+    for (let  i = 0 ; i < config.roles_tournament.length ; i++)
+        if ( message.member.roles.cache.has(config.roles_tournament[i]) )
             return true;
     return false;
 }
@@ -516,16 +514,16 @@ function matchmake(players, nbTeams, nbPlayersPerTeam) {
 
     players = sortPlayers(players);
 
-    var teams = [];
-    for(var j = 0; j < nbTeams; j++) {
+    let teams = [];
+    for(let j = 0; j < nbTeams; j++) {
         teams.push([]);
     }
 
-    var left = true;
-    var leftPerTeam = nbPlayersPerTeam;
+    let left = true;
+    let leftPerTeam = nbPlayersPerTeam;
     //var twoByTwo = true;
 
-    var i = 0;
+    let i = 0;
 
     console.log("Need to fill : " + leftPerTeam + " players per team.");
     while ( leftPerTeam >= 0 ){
@@ -539,13 +537,13 @@ function matchmake(players, nbTeams, nbPlayersPerTeam) {
 
         console.log("ENTERED one by one :" + teams.length);
         if ( left ){
-            for ( var team in teams ){
+            for ( let team in teams ){
                 console.log("Placed");
                 teams[team].push(players[i]);
                 i++;
             }
         }else{
-            for ( var team in teams ){
+            for ( let team in teams ){
                 console.log("Placed");
                 teams[teams.length - 1 - team].push(players[i]);
                 i++;

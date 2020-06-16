@@ -15,16 +15,16 @@ client.on('ready', function () {
 // Redirects the message to the according bot functionality
 client.on('message', function (message) {
 
-    var msg = message.content.toUpperCase(); //content
-    var args = message.content.slice(config.prefix.length).trim().split(' ');
+    let msg = message.content.toUpperCase(); //content
+    let args = message.content.slice(config.prefix.length).trim().split(' ');
 
-    var cmd = args.shift().toLowerCase();
+    let cmd = args.shift().toLowerCase();
 
     if(!msg.startsWith(config.prefix.toUpperCase())) return;
     if(message.author.bot) return;
 
     try{
-        var commandFile = require('./commands/'+cmd+'.js');
+        let commandFile = require('./commands/'+cmd+'.js');
         commandFile.run(client, message, args);
     }catch(e) {
         console.log(e.message);

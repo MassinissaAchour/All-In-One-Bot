@@ -1,14 +1,14 @@
 const config = require('../config.json');
 const help = require('../help.json');
 const Discord = require('discord.js');
-const ytdl = require("ytdl-core");
+const ytdl = require("ytdl-core-discord");
 const getYouTubeID = require("get-youtube-id");
 const request = require("request");
 const fetchVideoInfo = require("youtube-info");
 
 
-var guilds = {};
-var PlayMode = { "normal" : 0, "repeat" : 1, "playlist" : 2 };
+let guilds = {};
+let PlayMode = { "normal" : 0, "repeat" : 1, "playlist" : 2 };
 
 // Music functionality
 
@@ -27,30 +27,31 @@ exports.run = function(client, message, args, tools) {
             playMode: PlayMode.normal
         };
     }
-    var command = args.shift().toLowerCase();
 
-    if (command.toLowerCase() === "play") {
+    let command = args.shift().toLowerCase();
+
+    if (command.toLowerCase() === "play")
         playCommand(message, args);
-    }else if (command.toLowerCase() === "skip") {
+    else if (command.toLowerCase() === "skip")
         skipCommand(message);
-    } else if (command.toLowerCase() === "queue") {
+    else if (command.toLowerCase() === "queue")
         queueCommand(message);
-    } else if (command.toLowerCase() === "purge") {
+    else if (command.toLowerCase() === "purge")
        purgeCommand(message);
-    } else if (command.toLowerCase() === "mode") {
+    else if (command.toLowerCase() === "mode")
         modeCommand(message);
-    }else if( command.toLowerCase() === "disconnect" ){
+    else if( command.toLowerCase() === "disconnect" )
         disconnectCommand(message);
-    }else if( command.toLowerCase() === "help" ){
+    else if( command.toLowerCase() === "help" )
         helpCommand(message);
-    }
+
 };
 
 ////////////////Commands/////////////////////
 
 // play [url/song name] : plays a song from a youtube URL or uses the search functionality on youtube with the song name
 function playCommand(message, args) {
-    if (message.member.voiceChannel || guilds[message.guild.id].voiceChannel != null) {
+    if (message.member.voice.channel || guilds[message.guild.id].voiceChannel != null) {
         if (guilds[message.guild.id].queue.length > 0 || guilds[message.guild.id].isPlaying) {
             getID(args, function (id, type) {
                 if (type === 'id'){
@@ -62,7 +63,7 @@ function playCommand(message, args) {
                     });
                 }else if (type === 'playlist'){
                     playlistItemsListByPlaylistId(id, function(ids) {
-                        for (var  i = 0 ; i < ids.length ; i++){
+                        for (let  i = 0 ; i < ids.length ; i++){
                             guilds[message.guild.id].queue.push(ids[i].id);
                             message.channel.send("Adding : **" + ids[i].title + "**");
                             guilds[message.guild.id].queueNames.push(ids[i].title);
@@ -83,7 +84,7 @@ function playCommand(message, args) {
                     });
                 }else if (type === 'playlist'){
                     playlistItemsListByPlaylistId(id, function(ids) {
-                        for (var  i = 0 ; i < ids.length ; i++){
+                        for (let  i = 0 ; i < ids.length ; i++){
                             guilds[message.guild.id].queue.push(ids[i].id);
 
                             if ( i === 0 ){
@@ -115,7 +116,7 @@ function skipCommand(message) {
             skip_song(message);
             message.reply(" your skip has been acknowledged as an Admin. Skipping now!");
         } else {
-            var frac = Math.ceil((guilds[message.guild.id].voiceChannel.members.array().length - 1) / 2) - guilds[message.guild.id].skipReq;
+            let frac = Math.ceil((guilds[message.guild.id].voiceChannel.members.array().length - 1) / 2) - guilds[message.guild.id].skipReq;
             message.reply(" your skip has been acknowledged. You need " + frac + "  more skip votes!");
         }
     } else {
@@ -130,12 +131,12 @@ function queueCommand(message) {
         return;
     }
 
-    var message2 = "```";
+    let message2 = "```";
     if (guilds[message.guild.id].queueNames.length === 0)
         message2 += " Empty queue ";
 
-    for (var i = 0; i < guilds[message.guild.id].queueNames.length; i++) {
-        var temp = (i + 1) + ": " + guilds[message.guild.id].queueNames[i] + (i === 0 ? "**(Current Song)**" : "") + "\n";
+    for (let i = 0; i < guilds[message.guild.id].queueNames.length; i++) {
+        let temp = (i + 1) + ": " + guilds[message.guild.id].queueNames[i] + (i === 0 ? "**(Current Song)**" : "") + "\n";
         if ((message2 + temp).length <= 2000 - 3) {
             message2 += temp;
         } else {
@@ -175,7 +176,7 @@ function purgeCommand(message) {
 
 // mode [normal/repeat/playlist/] : Sets a reading mode for the queue.
 function modeCommand(message) {
-    var mode = args.shift().toLowerCase();
+    let mode = args.shift().toLowerCase();
     if (mode.toLowerCase() === "repeat") {
         guilds[message.guild.id].playMode = PlayMode.repeat;
         message.reply(" changed the play mode to Repeat !");
@@ -186,7 +187,7 @@ function modeCommand(message) {
         guilds[message.guild.id].playMode = PlayMode.normal;
         message.reply(" changed the play mode to Queue !");
     }else{
-        var msg = "";
+        let msg = "";
         if ( guilds[message.guild.id].playMode === PlayMode.repeat )
             msg = "The song is currently on repeat mode !";
         else if ( guilds[message.guild.id].playMode === PlayMode.playlist )
@@ -213,7 +214,7 @@ function disconnectCommand(message) {
 // help : Shows the list of commands and a description.
 function helpCommand(message) {
     // create an Embed message
-    var exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Music bot', 'Commands', help.music);
+    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Music bot', 'Commands', help.music);
     message.channel.send(exampleEmbed);
 }
 
@@ -230,16 +231,17 @@ function isYoutubePlaylist(str){
 
 function skip_song(message) {
     guilds[message.guild.id].dispatcher.end();
+    shiftQueue(message);
 }
 
 function playMusic(id, message) {
-    guilds[message.guild.id].voiceChannel = message.member.voiceChannel;
+    guilds[message.guild.id].voiceChannel = message.member.voice.channel;
 
-    guilds[message.guild.id].voiceChannel.join().then(function(connection) {
+    guilds[message.guild.id].voiceChannel.join().then(async function(connection) {
         if ( !guilds[message.guild.id].isPlaying )
             return;
 
-        stream = ytdl("https://www.youtube.com/watch?v=" + id, {
+        stream = await ytdl("https://www.youtube.com/watch?v=" + id, {
             quality: 'highestaudio',
             filter: 'audioonly'
         });
@@ -248,38 +250,42 @@ function playMusic(id, message) {
         guilds[message.guild.id].skippers = [];
 
 
-        guilds[message.guild.id].dispatcher = connection.playStream(stream);
-        guilds[message.guild.id].dispatcher.on('end', function() {
-            guilds[message.guild.id].skipReq = 0;
-            guilds[message.guild.id].skippers = [];
-            //loop the playlist
-            if ( guilds[message.guild.id].playMode === PlayMode.playlist ){
-                var current = guilds[message.guild.id].queue.shift();
-                var currentName = guilds[message.guild.id].queueNames.shift();
-                guilds[message.guild.id].queue.push(current);
-                guilds[message.guild.id].queueNames.push(currentName);
-                setTimeout(function() {
-                    playMusic(guilds[message.guild.id].queue[0], message);
-                }, 1000);
-            }else if( guilds[message.guild.id].playMode === PlayMode.repeat ){
-                setTimeout(function() {
-                    playMusic(guilds[message.guild.id].queue[0], message);
-                }, 1000);
-            }else{
-                guilds[message.guild.id].queue.shift();
-                guilds[message.guild.id].queueNames.shift();
-                if (guilds[message.guild.id].queue.length === 0) {
-                    guilds[message.guild.id].queue = [];
-                    guilds[message.guild.id].queueNames = [];
-                    guilds[message.guild.id].isPlaying = false;
-                } else {
-                    setTimeout(function() {
-                        playMusic(guilds[message.guild.id].queue[0], message);
-                    }, 1000);
-                }
-            }
+        guilds[message.guild.id].dispatcher = connection.play( stream, { type: 'opus' });
+        guilds[message.guild.id].dispatcher.on('finish', function() {
+            shiftQueue(message);
         });
     });
+}
+
+function shiftQueue(message){
+    guilds[message.guild.id].skipReq = 0;
+    guilds[message.guild.id].skippers = [];
+    //loop the playlist
+    if ( guilds[message.guild.id].playMode === PlayMode.playlist ){
+        let current = guilds[message.guild.id].queue.shift();
+        let currentName = guilds[message.guild.id].queueNames.shift();
+        guilds[message.guild.id].queue.push(current);
+        guilds[message.guild.id].queueNames.push(currentName);
+        setTimeout(function() {
+            playMusic(guilds[message.guild.id].queue[0], message);
+        }, 1000);
+    }else if( guilds[message.guild.id].playMode === PlayMode.repeat ){
+        setTimeout(function() {
+            playMusic(guilds[message.guild.id].queue[0], message);
+        }, 1000);
+    }else{
+        guilds[message.guild.id].queue.shift();
+        guilds[message.guild.id].queueNames.shift();
+        if (guilds[message.guild.id].queue.length === 0) {
+            guilds[message.guild.id].queue = [];
+            guilds[message.guild.id].queueNames = [];
+            guilds[message.guild.id].isPlaying = false;
+        } else {
+            setTimeout(function() {
+                playMusic(guilds[message.guild.id].queue[0], message);
+            }, 1000);
+        }
+    }
 }
 
 function getID(str, cb) {
@@ -300,7 +306,7 @@ function getYouTubePlaylistID(str){
 
 function search_video(query, callback) {
     request("https://www.googleapis.com/youtube/v3/search?part=id&type=video&q=" + encodeURIComponent(query) + "&key=" + config.yt_api_key, function(error, response, body) {
-        var json = JSON.parse(body);
+        let json = JSON.parse(body);
         if (!json.items[0]) callback("3_-a9nVZYjk");
         else {
             callback(json.items[0].id.videoId);
@@ -309,14 +315,14 @@ function search_video(query, callback) {
 }
 
 function playlistItemsListByPlaylistId(playlistID, callback) {
-    var list = [];
+    let list = [];
     request("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails" +
         "&maxResults=25" +
         "&playlistId=" + playlistID + "&key=" + config.yt_api_key, function(error, response, body) {
-        var json = JSON.parse(body);
+        let json = JSON.parse(body);
         if (!json.items[0]) list.push("3_-a9nVZYjk");
         else {
-            for (var  i = 0 ; i < json.items.length ; i++)
+            for (let  i = 0 ; i < json.items.length ; i++)
                 list.push({id : json.items[i].contentDetails.videoId, title : json.items[i].snippet.title});
         }
         callback(list);
@@ -326,7 +332,7 @@ function playlistItemsListByPlaylistId(playlistID, callback) {
 
 function simpleEmbed(color, title, description, fieldTitle, fieldContent)
 {
-    return  new Discord.RichEmbed()
+    return  new Discord.MessageEmbed()
         .setColor(color)
         .setTitle(title)
         .setDescription(description)
@@ -337,8 +343,8 @@ function simpleEmbed(color, title, description, fieldTitle, fieldContent)
 
 
 function hasMusicAdminPerms(message) {
-    for (var  i = 0 ; i < config.roles_music_admins.length ; i++)
-        if ( message.member.roles.find('id', config.roles_music_admins[i]) != null )
+    for (let  i = 0 ; i < config.roles_music_admins.length ; i++)
+        if ( message.member.roles.cache.has( config.roles_music_admins[i]) )
             return true;
     return false;
 }
