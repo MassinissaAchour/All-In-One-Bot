@@ -18,6 +18,7 @@ The bot currently contains these functionalities :
 ## Music
 
 **Commands**  
+
 `music play [Youtube URL]`  
 Plays a youtube video's audio.  
   
@@ -42,7 +43,7 @@ Disconnects the bot from a voice chat.
 
 ## Tournament  
 
-**Commands**
+**Commands**  
 `tournament start [nbTeams] [nbPlayersPerTeam]`  
 Starts a tournament with the specified size.  
   
