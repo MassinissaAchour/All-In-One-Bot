@@ -12,7 +12,7 @@ let PlayMode = { "normal" : 0, "repeat" : 1, "playlist" : 2 };
 // Music functionality
 
 // Command listener
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
 
     if (!guilds[message.guild.id]) {
         guilds[message.guild.id] = {

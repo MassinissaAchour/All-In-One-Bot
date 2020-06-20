@@ -5,7 +5,7 @@ const help = require('../help.json');
 
 
 
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
     let options = {
         apiKey: config.genius_api,
         title: args,

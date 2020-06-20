@@ -3,7 +3,7 @@ const config = require('../config.json');
 const help = require('../help.json');
 
 
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
 
 
     //pull the command
@@ -15,10 +15,10 @@ exports.run = function(client, message, args, tools) {
 
 };
 
-// purge [amount][@mention] : removes X messages in the text channel by a specific member.
-// purge [amount] : removes X messages in the text channel.
-// purge [@mention] : removes the last 100 messages by a specific member in the text channel.
-// purge : removes the last 100 messages in the text channel.
+// purge [amount][@mention] : removes X messages in the text channel by a specific member. (needs MANAGE_MESSAGES permission)
+// purge [amount] : removes X messages in the text channel. (needs MANAGE_MESSAGES permission)
+// purge [@mention] : removes the last 100 messages by a specific member in the text channel. (needs MANAGE_MESSAGES permission)
+// purge : removes the last 100 messages in the text channel. (needs MANAGE_MESSAGES permission)
 function purgeCommand(message) {
     if (!message.member.hasPermission('MANAGE_MESSAGES')){
         message.reply('You do not have the permissions to manage messages.');
@@ -48,15 +48,4 @@ function purgeCommand(message) {
             console.log(error.stack)
         });
     });
-}
-
-function simpleEmbed(color, title, description, fieldTitle, fieldContent)
-{
-    return  new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .addField(fieldTitle, fieldContent)
-        .setTimestamp()
-        .setFooter(config.bot_name +' - by Massinissa Achoru', 'https://i.imgur.com/wSTFkRM.png');
 }

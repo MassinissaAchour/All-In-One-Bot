@@ -3,7 +3,7 @@ const config = require('../config.json');
 const help = require('../help.json');
 
 
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
 
     //pull the command
     let command = args.shift().toLowerCase();

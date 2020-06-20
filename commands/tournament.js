@@ -18,7 +18,7 @@ Object.freeze(Regions);
 // Tournament functionality
 
 // Command listener
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
 
     //init the list of servers that the bot is connected
     if (!guilds[message.guild.id]) {

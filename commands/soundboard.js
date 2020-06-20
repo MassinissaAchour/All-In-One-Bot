@@ -10,7 +10,7 @@ let guilds = {};
 // Soundboard functionality
 
 // Command listener
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
 
     if (!guilds[message.guild.id]) {
         guilds[message.guild.id] = {

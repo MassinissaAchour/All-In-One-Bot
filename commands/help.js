@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const config = require('../config.json');
 const help = require('../help.json');
 
-exports.run = function(client, message, args, tools) {
+exports.run = function(client, message, args, guildConfig, tools) {
 
     // create an Embed message
     let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Multi-function bot', 'Help', help.bots);
