@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const config = require('../config.json');
 const help = require('../help.json');
+const embeds = require('../embeds.js');
 
 let guilds = {};
 
@@ -38,27 +39,27 @@ exports.run = function(client, message, args, guildConfig, tools) {
     let command = args.shift().toLowerCase();
 
     if (command.toLowerCase() === "start") {
-        startCommand(message, args);
+        startCommand(message, args, guildConfig);
     }else if (command.toLowerCase() === "cancel"){
-        cancelCommand(message);
+        cancelCommand(message, guildConfig);
     }else if (command.toLowerCase() === "register"){
-        registerCommand(message, args);
+        registerCommand(message, args, guildConfig);
     }else if (command.toLowerCase() === "unregister"){
         unregisterCommand(message, args);
     }else if (command.toLowerCase() === "registered"){
-        registeredCommand(message);
+        registeredCommand(message, guildConfig);
     }else if (command.toLowerCase() === "status"){
         statusCommand(message);
     }else if( command.toLowerCase() === "help" ){
-        helpCommand(message);
+        helpCommand(message, guildConfig);
     }
 };
 
 ////////////////Commands/////////////////////
 
 // start nbTeams] [nbPlayersPerTeam] : Starts a tournament with the specified size.
-function startCommand(message, args) {
-    if ( !hasTournamentPerms(message) ){
+function startCommand(message, args, guildConfig) {
+    if ( !hasTournamentPerms(message, guildConfig) ){
         message.reply("You do not have the permissions to do this. Please contact a Technician !");
         return;
     }
@@ -94,18 +95,18 @@ function startCommand(message, args) {
     guilds[message.guild.id].msgCollectors = [];
 
     // create an Embed message
-    let exampleEmbed = simpleEmbed('#0099ff', 'Inhouse', 'Small scale tournament', 'Registrations', "The registration process has started." +
+    let exampleEmbed = embeds.simpleEmbed('#0099ff', 'Inhouse', 'Small scale tournament', 'Registrations', "The registration process has started." +
         " We are waiting for " + (guilds[message.guild.id].nbPlayersPerTeam * guilds[message.guild.id].nbTeams) + " players to register." +
-        " To enter the inhouse please type the command " + config.prefix + "tournament register <YOUR-REGION> <YOUR-IGN>." +
-        " Please use the IGN of your highest ranked account even if you're not going to play on it.");
+        " To enter the inhouse please type the command " + guildConfig.prefix + "tournament register <YOUR-REGION> <YOUR-IGN>." +
+        " Please use the IGN of your highest ranked account even if you're not going to play on it.", guildConfig);
 
     //send the message, react to it, wait for reactions.
     message.channel.send(exampleEmbed).then(onReaction);
 }
 
 // cancel : Cancels the current tournament.
-function cancelCommand(message) {
-    if ( !hasTournamentPerms(message) ){
+function cancelCommand(message, guildConfig) {
+    if ( !hasTournamentPerms(message, guildConfig) ){
         message.reply("You do not have the permissions to do this. Please contact a Technician !");
         return;
     }
@@ -125,7 +126,7 @@ function cancelCommand(message) {
 }
 
 // register [REGION] [IGN] : Registers you to the tournament and associates you to your League Of Legends account.
-function registerCommand(message, args) {
+function registerCommand(message, args, guildConfig) {
     let region = args.shift();
     let ign = args.join(' ');
 
@@ -135,7 +136,7 @@ function registerCommand(message, args) {
     }
 
     //try to register the player
-    register(ign, region, message, message.guild);
+    register(ign, region, message, message.guild, guildConfig);
 }
 
 // unregister : Unregisters you from the current tournament.
@@ -188,8 +189,8 @@ function unregisterCommand(message, args) {
 }
 
 // registered : Shows the list of the currently registered players.
-function registeredCommand(message) {
-    let playerListEmbed = listPlayersEmbed('#0099ff', 'Registrations', 'List of registered players', sortPlayers(guilds[message.guild.id].players));
+function registeredCommand(message, guildConfig) {
+    let playerListEmbed = embeds.listPlayersEmbed('#0099ff', 'Registrations', 'List of registered players', sortPlayers(guilds[message.guild.id].players), guildConfig);
     guilds[message.guild.id].channel.send(playerListEmbed);
 }
 
@@ -204,13 +205,11 @@ function statusCommand(message) {
 }
 
 // help : Shows the list of commands and a description.
-function helpCommand(message) {
+function helpCommand(message, guildConfig) {
     // create an Embed message
-    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Tournament bot', 'Commands', help.tournament);
+    let exampleEmbed = embeds.simpleEmbed('#0099ff', guildConfig.bot_name, 'Tournament bot', 'Commands', help.tournament, guildConfig);
     message.channel.send(exampleEmbed);
 }
-
-
 
 
 ////////////////NEED TO DOCUMENT THIS MORE/////////////////////
@@ -227,65 +226,9 @@ function httpGet(theUrl)
     return xmlHttp.responseText;
 }
 
-function simpleEmbed(color, title, description, fieldTitle, fieldContent)
-{
-    return new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .addField(fieldTitle, fieldContent)
-        .setTimestamp()
-        .setFooter(config.bot_name +' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
-}
-
-function listTeams(guild){
-    let teamsEmbed = listTeamsEmbed('#0099ff', 'Matchmaking', 'The teams', guilds[guild.id].teams);
+function listTeams(guild, guildConfig){
+    let teamsEmbed = embeds.listTeamsEmbed('#0099ff', 'Matchmaking', 'The teams', guilds[guild.id].teams, guildConfig);
     guilds[guild.id].channel.send(teamsEmbed);
-}
-
-function listPlayersEmbed(color, title, description, players)
-{
-    let embed = new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .setTimestamp()
-        .setFooter(config.bot_name + ' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
-
-    for ( let key in players){
-        if ( players[key].nickname == null )
-            embed.addField(players[key].author, players[key].ign + " ( " + players[key].tier + " " + players[key].rank + " )" );
-        else
-            embed.addField(players[key].nickname + " ( " + players[key].author + " )", players[key].ign + " ( " + players[key].tier + " " + players[key].rank + " )" );
-    }
-    return embed;
-}
-
-function listTeamsEmbed(color, title, description, teams)
-{
-    let embed = new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .setTimestamp()
-        .setFooter(config.bot_name + ' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
-
-    for ( let team in teams ){
-        let teamRank = 0;
-        let playersList = "";
-        let sortedTeam = sortPlayers(teams[team]);
-        for ( let player in sortedTeam ) {
-            playersList += sortedTeam[player].ign + " ( " + sortedTeam[player].tier + " " + sortedTeam[player].rank + " )\n";
-            teamRank += calcRankingPoints(sortedTeam[player]);
-        }
-        let points = Math.floor(teamRank / sortedTeam.length);
-        let tier = Math.floor(points / Object.keys(Ranks).length);
-        let rank = points % Object.keys(Ranks).length;
-
-        embed.addField("Team " + (Number(team) + 1 ) + " (AVG RNK " + fromValueToTier(tier) + " " + fromValueToRank(rank) +  " )", playersList );
-    }
-
-    return embed;
 }
 
 function onReaction (registrationMessage) {
@@ -361,7 +304,7 @@ function onDM(askIgnMsg, registrationMessage, user) {
 }
 
 
-function register(ign, region, message, guild)
+function register(ign, region, message, guild, guildConfig)
 {
     //check if registrations are open
     if ( !guilds[guild.id].registration ){
@@ -433,7 +376,7 @@ function register(ign, region, message, guild)
             console.log(teams[team]);
         }
 
-        listTeams(guild);
+        listTeams(guild, guildConfig);
 
     }
     return true;
@@ -502,11 +445,8 @@ function regionSelect(region){
     return regionName;
 }
 
-function hasTournamentPerms(message) {
-    for (let  i = 0 ; i < config.roles_tournament.length ; i++)
-        if ( message.member.roles.cache.has(config.roles_tournament[i]) )
-            return true;
-    return false;
+function hasTournamentPerms(message, guildConfig) {
+    return message.member.roles.cache.has(guildConfig.role_tournament);
 }
 
 function matchmake(players, nbTeams, nbPlayersPerTeam) {

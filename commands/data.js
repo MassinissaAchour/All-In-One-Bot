@@ -32,14 +32,3 @@ function joinedCommand(message) {
 function membersCommand(message) {
     message.reply("There are " + message.guild.members.cache.array().length + " members on the server.");
 }
-
-function simpleEmbed(color, title, description, fieldTitle, fieldContent)
-{
-    return  new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .addField(fieldTitle, fieldContent)
-        .setTimestamp()
-        .setFooter(config.bot_name +' - by Massinissa Achoru', 'https://i.imgur.com/wSTFkRM.png');
-}

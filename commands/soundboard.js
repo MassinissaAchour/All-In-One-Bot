@@ -3,6 +3,7 @@ const help = require('../help.json');
 const Discord = require('discord.js');
 const ytdlDiscord = require("ytdl-core-discord");
 const Sounds = require('../soundeffects.json');
+const embeds = require('../embeds.js');
 
 
 let guilds = {};
@@ -24,9 +25,9 @@ exports.run = function(client, message, args, guildConfig, tools) {
     let command = args.shift().toLowerCase();
 
     if( command === "help" ){
-        helpCommand(message);
+        helpCommand(message, guildConfig);
     }else if( command === "list" ){
-        listCommand(message);
+        listCommand(message, guildConfig);
     }else if(command === "play"){
         playCommand(message, args);
 
@@ -61,21 +62,21 @@ function playCommand(message, args) {
 
 
 // list : Shows the list of available sound bits.
-function listCommand(message){
+function listCommand(message, guildConfig){
     // create an Embed message
     let list = "";
     for ( let soundName in Sounds){
         list += soundName + "\n";
     }
 
-    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Soundboard bot', 'Sounds', list);
+    let exampleEmbed = embeds.simpleEmbed('#0099ff', guildConfig.bot_name, 'Soundboard bot', 'Sounds', list, guildConfig);
     message.channel.send(exampleEmbed);
 }
 
 // help : Shows the list of commands and a description.
-function helpCommand(message) {
+function helpCommand(message, guildConfig) {
     // create an Embed message
-    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Soundboard bot', 'Commands', help.soundboard);
+    let exampleEmbed = embeds.simpleEmbed('#0099ff', guildConfig.bot_name, 'Soundboard bot', 'Commands', help.soundboard, guildConfig);
     message.channel.send(exampleEmbed);
 }
 
@@ -110,16 +111,4 @@ function playSound(id, message) {
             }
         });
     });
-}
-
-
-function simpleEmbed(color, title, description, fieldTitle, fieldContent)
-{
-    return  new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .addField(fieldTitle, fieldContent)
-        .setTimestamp()
-        .setFooter(config.bot_name +' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
 }

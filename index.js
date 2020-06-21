@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
 const Sequelize = require('sequelize');
-const fs = require('fs');
 
 const client = new Discord.Client({
    token: config.token,
@@ -34,6 +33,14 @@ const Configs = sequelize.define('configs', {
         type: Sequelize.STRING,
         defaultValue: "!",
         allowNull: false,
+    },
+    role_tournament:  {
+        type: Sequelize.STRING,
+        defaultValue: ""
+    },
+    role_music:  {
+        type: Sequelize.STRING,
+        defaultValue: ""
     }
 });
 

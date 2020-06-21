@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const ytdlDiscord = require("ytdl-core-discord");
 const ytdl = require("ytdl-core");
 const request = require("request");
+const embeds = require('../embeds.js');
 
 
 let guilds = {};
@@ -32,7 +33,7 @@ exports.run = function(client, message, args, guildConfig, tools) {
     if (command.toLowerCase() === "play")
         playCommand(message, args);
     else if (command.toLowerCase() === "skip")
-        skipCommand(message);
+        skipCommand(message, guildConfig);
     else if (command.toLowerCase() === "queue")
         queueCommand(message);
     else if (command.toLowerCase() === "purge")
@@ -42,7 +43,7 @@ exports.run = function(client, message, args, guildConfig, tools) {
     else if( command.toLowerCase() === "disconnect" )
         disconnectCommand(message);
     else if( command.toLowerCase() === "help" )
-        helpCommand(message);
+        helpCommand(message, guildConfig);
 
 };
 
@@ -104,14 +105,14 @@ function playCommand(message, args) {
 }
 
 // skip : Votes to skip the current song. Majority needed. Admin skips without majority.
-function skipCommand(message) {
+function skipCommand(message, guildConfig) {
     if (guilds[message.guild.id].skippers.indexOf(message.author.id) === -1) {
         guilds[message.guild.id].skippers.push(message.author.id);
         guilds[message.guild.id].skipReq++;
         if (guilds[message.guild.id].skipReq >= Math.ceil((guilds[message.guild.id].voiceChannel.members.array().length - 1) / 2)) {
             skip_song(message);
             message.reply(" your skip has been acknowledged. Skipping now!");
-        }else if( hasMusicAdminPerms(message)){
+        }else if( hasMusicAdminPerms(message, guildConfig)){
             skip_song(message);
             message.reply(" your skip has been acknowledged as an Admin. Skipping now!");
         } else {
@@ -211,9 +212,9 @@ function disconnectCommand(message) {
 }
 
 // help : Shows the list of commands and a description.
-function helpCommand(message) {
+function helpCommand(message, guildConfig) {
     // create an Embed message
-    let exampleEmbed = simpleEmbed('#0099ff', config.bot_name, 'Music bot', 'Commands', help.music);
+    let exampleEmbed = embeds.simpleEmbed('#0099ff', guildConfig.bot_name, 'Music bot', 'Commands', help.music, guildConfig);
     message.channel.send(exampleEmbed);
 }
 
@@ -329,21 +330,6 @@ function playlistItemsListByPlaylistId(playlistID, callback) {
 
 }
 
-function simpleEmbed(color, title, description, fieldTitle, fieldContent)
-{
-    return  new Discord.MessageEmbed()
-        .setColor(color)
-        .setTitle(title)
-        .setDescription(description)
-        .addField(fieldTitle, fieldContent)
-        .setTimestamp()
-        .setFooter(config.bot_name +' - by NA Locoboy', 'https://i.imgur.com/wSTFkRM.png');
-}
-
-
-function hasMusicAdminPerms(message) {
-    for (let  i = 0 ; i < config.roles_music_admins.length ; i++)
-        if ( message.member.roles.cache.has( config.roles_music_admins[i]) )
-            return true;
-    return false;
+function hasMusicAdminPerms(message, guildConfig) {
+    return message.member.roles.cache.has(guildConfig.role_music);
 }
