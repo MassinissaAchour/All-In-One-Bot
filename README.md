@@ -99,6 +99,28 @@ removes X messages in the text channel by a specific member.
 `karaoke [song name]`  
 Searches for the song using the Genius API and prints it's lyrics in the text channel.  
   
+## Config  
+
+**Commands**  
+  
+`prefix`  
+Reads the current prefix for the bot.  
+  
+`prefix [prefix]`  
+Sets a new prefix for the bot (needs ADMINISTRATOR permission).  
+  
+`name `  
+Reads the current name of the bot.  
+  
+`name [bot name]`  
+Set a new name to the bot (needs MANAGE_GUILD permission). 
+  
+`role [music|tournament] `  
+Reads the current admin role for the specified fonctionality.  
+  
+`role [music|tournament] [id] `  
+Sets the admin role for the specified fonctionality.  
+  
 # What's next?  
 
 ## New functionalities  
