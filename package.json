@@ -25,7 +25,7 @@
     "ffmpeg": "0.0.4",
     "ffmpeg-binaries": "^3.2.2",
     "fs": "0.0.1-security",
-    "genius-lyrics-api": "^3.0.0",
+    "genius-lyrics-api": "^3.0.6",
     "request": "^2.88.2",
     "sequelize": "^5.21.13",
     "sqlite3": "^4.2.0",
