@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/MassinissaAchour/All-In-One-Bot#readme",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
+    "@discordjs/opus": "^0.8.0",
     "discord.js": "^12.2.0",
     "ffmpeg": "0.0.4",
     "ffmpeg-binaries": "^3.2.2",
